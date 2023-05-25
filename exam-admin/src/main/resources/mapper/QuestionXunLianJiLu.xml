@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzz.mapper.QuestionXunLianJiLuMapper">
+
+<!--    统计学生学习题库的数量 正确率 错误率-->
+    <select id="Echartstikunxunlianlist" resultType="java.util.Map">
+        SELECT
+            xunlianjilu_tikuname,
+            xunlianjilu_truegeshu,
+            xunlianjilu_falsegeshu,
+            xunlianjilu_zonggeshu,
+            xunlianjilu_geshuzhengquelv
+        FROM
+            `question_xunlianjilu`
+        WHERE
+            xunlianjilu_username = #{xunlianjiluUsername}
+    </select>
+
+<!--    统计学生学习视频的累积时长-->
+    <select id="EchartsEchartsMovesLeiJilist" resultType="java.util.Map">
+        SELECT
+            study_yewu,
+            study_shichang,
+            study_leijishichang,
+            study_totalshichang
+        FROM
+            `study_duration`
+        WHERE
+            study_username = #{xunlianjiluUsername}
+    </select>
+
+<!--   部门经理统计 整个部门题库学习情况 信息 -->
+    <select id="EchartsBuMengJingLinInfolist" resultType="com.wzz.vo.BuMengsshujuVo">
+        SELECT
+        username,
+        threevalue,
+        zhihangvalue,
+        xunlianjilu_tikuname AS xunlianjiluTikuname,
+        xunlianjilu_falsegeshu AS xunlianjiluFalsegeshu,
+        xunlianjilu_truegeshu AS xunlianjiluTruegeshu,
+        xunlianjilu_zonggeshu AS xunlianjiluZonggeshu,
+        xunlianjilu_geshuzhengquelv AS xunlianjiluGeshuzhengquelv
+        FROM user
+        INNER JOIN question_xunlianjilu ON user.username = question_xunlianjilu.xunlianjilu_username
+        WHERE user.threevalue &lt;&gt; "支行行长" AND user.threevalue &lt;&gt; ''
+    </select>
+
+
+
+    <!--   部门经理统计 整个部门网课学习情况信息 -->
+    <select id="tableBuMengJingLinWangKeInfolist" resultType="com.wzz.vo.BuMengWangKeVo">
+        SELECT
+            username,
+            threevalue,
+            zhihangvalue,
+            study_yewu AS studyYewu,
+            study_wangkename AS studyWangkename,
+            study_starttime  AS studyStarttime,
+            study_shichang AS studyShichang,
+            study_leijishichang AS studyLeijishichang,
+            study_totalshichang AS studyTotalshichang
+        FROM
+            user INNER JOIN study_duration ON user.username = study_duration.study_username
+        WHERE user.threevalue &lt;&gt; "支行行长" AND user.threevalue &lt;&gt; ''
+    </select>
+
+
+    <!--   行长统计 整个部门题库学习情况 信息 -->
+    <select id="TablesHangZhangJingLinTiKuInfolist" resultType="com.wzz.vo.BuMengsshujuVo">
+        SELECT
+            username,
+            threevalue,
+            zhihangvalue,
+            xunlianjilu_tikuname AS xunlianjiluTikuname,
+            xunlianjilu_falsegeshu AS xunlianjiluFalsegeshu,
+            xunlianjilu_truegeshu AS xunlianjiluTruegeshu,
+            xunlianjilu_zonggeshu AS xunlianjiluZonggeshu,
+            xunlianjilu_geshuzhengquelv AS xunlianjiluGeshuzhengquelv
+        FROM user
+        INNER JOIN question_xunlianjilu ON user.username = question_xunlianjilu.xunlianjilu_username
+       WHERE user.threevalue &lt;&gt; ''
+    </select>
+
+<!--  行长统计 整个部门网课的学习情况 信息  -->
+    <select id="TablesHangZhangJingLinWangKeInfolist" resultType="com.wzz.vo.BuMengWangKeVo">
+        SELECT
+            username,
+            threevalue,
+            zhihangvalue,
+            study_yewu AS studyYewu,
+            study_wangkename AS studyWangkename,
+            study_starttime  AS studyStarttime,
+            study_shichang AS studyShichang,
+            study_leijishichang AS studyLeijishichang,
+            study_totalshichang AS studyTotalshichang,
+            ROUND( (study_leijishichang / study_totalshichang )*100, 2 ) AS remark
+        FROM
+        user INNER JOIN study_duration ON user.username = study_duration.study_username
+        WHERE   user.threevalue &lt;&gt; '' ORDER BY remark DESC
+    </select>
+
+
+    <!--  学生会以一个部门或支行为一个团体，学生可以在此查看个人学习情况在所属部门的情况 根据学生所属的支行查询数据信息  -->
+    <select id="TablesSuoShuBuMenQingKunInfolistTiku" parameterType="java.lang.String"  resultType="com.wzz.vo.BuMengsshujuVo">
+        SELECT
+            username,
+            threevalue,
+            zhihangvalue,
+            xunlianjilu_tikuname AS xunlianjiluTikuname,
+            xunlianjilu_falsegeshu AS xunlianjiluFalsegeshu,
+            xunlianjilu_truegeshu AS xunlianjiluTruegeshu,
+            xunlianjilu_zonggeshu AS xunlianjiluZonggeshu,
+            xunlianjilu_geshuzhengquelv AS xunlianjiluGeshuzhengquelv
+        FROM
+        user
+        INNER JOIN question_xunlianjilu ON user.username = question_xunlianjilu.xunlianjilu_username WHERE
+          user.threevalue &lt;&gt; ''
+         AND zhihangvalue=#{zhihangvalue} ORDER BY xunlianjiluGeshuzhengquelv
+    </select>
+
+<!-- 然后只能看到同部门的就行   -->
+    <select id="TablesSuoShuBuMenQingKunInfolist" parameterType="java.lang.String"  resultType="com.wzz.vo.BuMengsshujuVo">
+        SELECT
+            zhihangvalue,
+            username,
+            threevalue,
+            study_yewu,
+            ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 ) AS cjmovebili,
+            IF (ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 )>= 100, '50',
+                        ROUND( ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 )/ 2, 2 )) AS chulimove,
+            xunlianjilu_geshuzhengquelv,
+            IF ( xunlianjilu_geshuzhengquelv = '100%', 50, xunlianjilu_geshuzhengquelv / 2 ) AS chulitiku,
+            RANK() OVER ( ORDER BY chulimove + chulitiku DESC ) AS 'rank'
+        FROM
+            `study_duration`
+                INNER JOIN question_xunlianjilu ON study_duration.study_yewu = question_xunlianjilu.xunlianjilu_tikuname
+                INNER JOIN `user` ON user.username = question_xunlianjilu.xunlianjilu_username
+        WHERE
+                study_duration.study_username = question_xunlianjilu.xunlianjilu_username
+             AND  zhihangvalue=#{zhihangvalue}
+    </select>
+
+
+<!--   部门情况-======团队排行榜  没有进行支行 汇总  -->
+    <select id="TablesTuanDuioPaiHangBangInfolist" parameterType="String" resultType="com.wzz.vo.BuMengsshujuVo">
+        SELECT
+        zhihangvalue,
+        xunlianjilu_tikuname,
+        sum( xunlianjilu_falsegeshu ) AS xunlianjiluFalsegeshu,
+        sum( xunlianjilu_truegeshu ) AS xunlianjiluTruegeshu ,
+        sum( xunlianjilu_zonggeshu ) AS xunlianjiluZonggeshu,
+        ROUND(sum( xunlianjilu_geshuzhengquelv)/COUNT(xunlianjilu_tikuname),2) AS xunlianjiluGeshuzhengquelv
+        FROM
+        `user` INNER JOIN question_xunlianjilu ON user.username = question_xunlianjilu.xunlianjilu_username
+        WHERE
+        user.threevalue &lt;&gt; ''
+        GROUP BY
+        zhihangvalue,xunlianjilu_tikuname
+        ORDER BY xunlianjiluGeshuzhengquelv DESC
+    </select>
+
+
+    <!--   部门情况-======团队排行榜  进行支行 汇总 3个支行 -->
+    <select id="TablesTuanDuioPaiHangBangHuiZongInfolist" parameterType="String" resultType="com.wzz.vo.BuMengsshujuVo">
+        SELECT
+        zhihangvalue,
+        sum( xunlianjilu_falsegeshu ) AS xunlianjiluFalsegeshu,
+        sum( xunlianjilu_truegeshu ) AS xunlianjiluTruegeshu ,
+        sum( xunlianjilu_zonggeshu ) AS xunlianjiluZonggeshu,
+        ROUND(sum( xunlianjilu_geshuzhengquelv)/COUNT(xunlianjilu_tikuname),2) AS xunlianjiluGeshuzhengquelv,
+        sum( xunlianjilu_geshuzhengquelv ) AS xunlianjiluGeshuzhengquelv
+        FROM
+        `user` INNER JOIN question_xunlianjilu ON user.username = question_xunlianjilu.xunlianjilu_username
+        WHERE
+        user.threevalue &lt;&gt; ''
+        GROUP BY
+        zhihangvalue
+        ORDER BY xunlianjiluGeshuzhengquelv DESC
+    </select>
+
+<!--   学习发展曲线表 -->
+    <select id="TablesAllStudyFaZhanQuXianDataInfolist"  resultType="com.wzz.entity.QuestionXunLianJiLu">
+        SELECT xunlianjilu_username AS xunlianjiluUsername,
+               xunlianjilu_tikuname AS xunlianjiluTikuname,
+               xunlianjilu_geshuzhengquelv AS xunlianjiluGeshuzhengquelv
+        FROM `question_xunlianjilu` ORDER BY xunlianjilu_tikuname
+    </select>
+
+
+<!--  曲线图原理为通过对网课和题库学习情况赋值算分，网课刷题各占50%，每星期记录一次  -->
+    <select id="TablesAllStudyFuzhiFiveLvDataInfolist"  resultType="com.wzz.vo.StudyXunLianVo">
+        SELECT
+            study_username,
+            study_yewu,
+            study_wangkename,
+            xunlianjilu_username,
+            IF(ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 )>= 100,'50',ROUND( ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 )/ 2, 2 ) ) AS chulimove,
+            ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 ) AS cjmovebili,
+            xunlianjilu_tikuname,
+            xunlianjilu_geshuzhengquelv,
+            IF
+                ( xunlianjilu_geshuzhengquelv = '100%', 50, xunlianjilu_geshuzhengquelv / 2 ) AS chulitiku
+        FROM
+            `study_duration`
+                INNER  JOIN question_xunlianjilu ON study_duration.study_yewu = question_xunlianjilu.xunlianjilu_tikuname
+                WHERE study_duration.study_username=question_xunlianjilu.xunlianjilu_username
+        ORDER BY
+            cjmovebili DESC
+    </select>
+
+
+    <!--  通过当前学生登录的名称-》》曲线图原理为通过对网课和题库学习情况赋值算分，网课刷题各占50%，每星期记录一次  -->
+    <select id="SelectUserNameAllStudyFuzhiFiveLvDataInfolist" parameterType="string"  resultType="com.wzz.vo.StudyXunLianVo">
+        SELECT
+            study_username,
+            study_yewu,
+            study_wangkename,
+            xunlianjilu_username,
+            IF(ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 )>= 100,'50',ROUND( ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 )/ 2, 2 ) ) AS chulimove,
+            ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 ) AS cjmovebili,
+            xunlianjilu_tikuname,
+            xunlianjilu_geshuzhengquelv,
+            IF
+                ( xunlianjilu_geshuzhengquelv = '100%', 50, xunlianjilu_geshuzhengquelv / 2 ) AS chulitiku
+        FROM
+            `study_duration`
+                INNER  JOIN question_xunlianjilu ON study_duration.study_yewu = question_xunlianjilu.xunlianjilu_tikuname
+        WHERE study_duration.study_username=question_xunlianjilu.xunlianjilu_username
+        AND   study_duration.study_username=#{studyUsername}
+        ORDER BY
+            cjmovebili DESC
+
+    </select>
+
+
+<!--结束时间 以这个来记录  一周  数据（所有的数据 学生进行50%的 计算 给管理员进行查查）-->
+    <select id="OneWeekShiXunTuEcharts" resultType="com.wzz.vo.StudyXunLianVo">
+        SELECT
+            study_username,
+            study_yewu,
+            study_wangkename,
+            study_endtime,
+            xunlianjilu_username,
+            IF(ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 )>= 100,'50',
+               ROUND( ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 )/ 2, 2 ) ) AS chulimove,
+            ROUND( ( study_leijishichang / study_totalshichang )* 100, 2 ) AS cjmovebili,
+            xunlianjilu_tikuname,
+            xunlianjilu_geshuzhengquelv,
+            IF
+                ( xunlianjilu_geshuzhengquelv = '100%', 50, xunlianjilu_geshuzhengquelv / 2 ) AS chulitiku
+        FROM
+            `study_duration`
+                INNER JOIN question_xunlianjilu ON study_duration.study_yewu = question_xunlianjilu.xunlianjilu_tikuname
+        WHERE
+                study_duration.study_username = question_xunlianjilu.xunlianjilu_username
+          AND YEARWEEK( date_format( study_endtime, '%Y-%m-%d' ), 1 ) = YEARWEEK( now(), 7 )
+        ORDER BY
+            cjmovebili DESC
+    </select>
+
+
+    <select id="MovesZT" parameterType="string" resultType="com.wzz.vo.StudyDurationVo">
+        SELECT study_id,study_yewu,study_wangkename,study_leijishichang,study_totalshichang,
+               IF(study_leijishichang>=study_totalshichang,'已看完','未看完') AS MovesZt
+        FROM `study_duration` WHERE study_username=#{studyUsername}
+    </select>
+
+</mapper>

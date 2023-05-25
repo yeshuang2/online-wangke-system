@@ -1,0 +1,50 @@
+.el-container {
+  width: 100%;
+  height: 100%;
+
+  .el-menu {
+    height: 100% !important;
+    background-color: rgb(48, 63, 84);
+   
+  }
+}
+
+.el-main, .el-header {
+  padding: 0;
+}
+
+/*  右侧面板根据左侧的宽度变化而变化,侧边栏缩小,右侧面板变大,反之同理*/
+#aside {
+  transition: width .3s;
+}
+
+.el-breadcrumb {
+  display: inline-block;
+}
+
+/*右上角的个人信息字体*/
+.el-dropdown-link {
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.el-tag {
+  border: none;
+  border-radius: 0;
+  box-shadow: 0 0 .5px .5px gray;
+  color: black;
+  font-weight: 400;
+  text-align: center;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/deep/ .el-card__body {
+  padding: 10px;
+}
+
+/*  tag的高亮*/
+.active {
+  background-color: rgb(66, 185, 131);
+  color: white;
+}

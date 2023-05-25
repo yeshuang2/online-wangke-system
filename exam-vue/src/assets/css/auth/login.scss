@@ -1,0 +1,54 @@
+.el-container {
+  min-width: 417px;
+  height: 100%;
+  background: url("../../assets/imgs/06.jpg");
+  background-size: 100% 100%;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: blueviolet;
+}
+
+/*  card样式  */
+.box-card {
+  width: 450px;
+}
+
+.el-card {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  border-radius: 15px;
+}
+
+.card-header {
+  text-align: center;
+
+  p {
+    font-size: 20px;
+  }
+
+}
+
+/*  表单的左侧margin清楚 */
+/deep/ .el-form-item__content {
+  margin: 0 !important;
+}
+
+/*  按钮样式 */
+.el-button {
+  width: 48%;
+}
+
+/*  按钮前的小图标样式更改*/
+/deep/ .el-icon {
+  margin-right: 3px;
+}
+
+/*  验证码的输入框*/
+.code {
+  width: 72%;
+}

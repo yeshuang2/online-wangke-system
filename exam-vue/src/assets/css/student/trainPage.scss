@@ -1,0 +1,66 @@
+
+.el-container {
+  width: 100%;
+  height: 100%;
+}
+
+.el-container {
+  animation: leftMoveIn .7s ease-in;
+}
+
+@keyframes leftMoveIn {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+.el-row {
+  width: 100%;
+}
+
+span {
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.el-radio-group label {
+  display: block;
+  width: 400px;
+  padding: 48px 20px 10px 20px;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
+  margin-bottom: 10px;
+  cursor: pointer;
+  position: relative;
+
+  span {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+  }
+}
+
+.el-radio-group label:hover {
+  background-color: rgb(245, 247, 250);
+}
+
+/*当前选中的答案*/
+.active {
+  border: 1px solid #1f90ff !important;
+  opacity: .5;
+}
+
+/*答题卡的正确的颜色*/
+.true {
+  background-color: rgb(19, 206, 102);;
+}
+
+.wrong {
+  background-color: rgb(255, 73, 73);
+}
