@@ -6,7 +6,7 @@
 
 ## 3、给个Star星吧！以此鼓励、谢谢支持呀！！！
 
-## 4、源码地址：https://gitee.com/ye-shuang/online-wangke-system
+## 4、源码地址：[https://gitee.com/ye-shuang/online-wangke-system](https://gitee.com/ye-sgui/online-wangke-system)
 
 #### 软件架构
 
